@@ -12,8 +12,8 @@ var homeTemplate *views.View
 var contactTemplate *views.View
 
 func main() {
-	homeTemplate = views.NewView("./views/home.gohtml")
-	contactTemplate = views.NewView("./views/contact.gohtml")
+	homeTemplate = views.NewView("master", "./views/home.gohtml")
+	contactTemplate = views.NewView("master", "./views/contact.gohtml")
 
 	mux := mux.NewRouter()
 	mux.HandleFunc("/", home)
@@ -24,14 +24,16 @@ func main() {
 
 func home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	if err := homeTemplate.Template.Execute(w, nil); err != nil {
+	err := homeTemplate.Template.ExecuteTemplate(w, homeTemplate.Layout, nil)
+	if err != nil {
 		panic(err)
 	}
 }
 
 func contact(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	if err := contactTemplate.Template.Execute(w, nil); err != nil {
+	err := contactTemplate.Template.ExecuteTemplate(w, contactTemplate.Layout, nil)
+	if err != nil {
 		panic(err)
 	}
 }
