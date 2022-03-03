@@ -16,6 +16,11 @@ func NewUsers() *Users {
 	}
 }
 
+type SignupForm struct {
+	Email    string `schema:"email"`
+	Password string `schema:"password"`
+}
+
 type Users struct {
 	NewView *views.View
 }
@@ -36,7 +41,11 @@ func (u *Users) New(w http.ResponseWriter, r *http.Request) {
 //
 // POST /signup
 func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
-	email := r.PostFormValue("email")
-	pwd := r.PostForm.Get("password")
-	fmt.Fprintf(w, "nice one man \n%s\n%s", email, pwd)
+	var form SignupForm
+	err := ParseForm(r, &form)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Fprintln(w, "Email is =>", form.Email)
+	fmt.Fprintln(w, "Password is =>", form.Password)
 }
