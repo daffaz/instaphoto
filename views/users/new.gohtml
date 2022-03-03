@@ -1,6 +1,6 @@
 {{define "yield"}}
-<div class="row">
-    <div class="col-12">
+<div class="row h-100">
+    <div class="col-md-8 offset-md-2">
         <div class="card">
             <div class="card-header">
                 Sign Up Now!
@@ -14,7 +14,7 @@
 {{end}}
 
 {{define "signupForm"}}
-<form method="post">
+<form method="post" action="/signup">
     <div class="mb-3">
         <label for="email" class="form-label">Email address</label>
         <input type="email" class="form-control" id="email" name="email">
