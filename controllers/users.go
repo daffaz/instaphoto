@@ -12,7 +12,7 @@ import (
 // initial setup.
 func NewUsers() *Users {
 	return &Users{
-		NewView: views.NewView("master", "./views/users/new.gohtml"),
+		NewView: views.NewView("master", "users/new"),
 	}
 }
 
