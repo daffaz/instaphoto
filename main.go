@@ -11,10 +11,13 @@ import (
 func main() {
 	staticC := controllers.NewStatic()
 	usersC := controllers.NewUsers()
+	galleriesC := controllers.NewGalleries()
 
 	mux := mux.NewRouter()
 	mux.Handle("/", staticC.Home).Methods("GET")
 	mux.Handle("/contact", staticC.Contact).Methods("GET")
+	mux.Handle("/faq", staticC.Faq).Methods("GET")
+	mux.HandleFunc("/galleries", galleriesC.New).Methods("GET")
 	mux.HandleFunc("/register", usersC.New).Methods("GET")
 	mux.HandleFunc("/register", usersC.Create).Methods("POST")
 
