@@ -21,9 +21,3 @@ func main() {
 	log.Println("Running in port :4000")
 	log.Fatal(http.ListenAndServe(":4000", mux))
 }
-
-func must(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
