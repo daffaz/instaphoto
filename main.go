@@ -2,6 +2,7 @@ package main
 
 import (
 	"instaphoto/controllers"
+	"instaphoto/models"
 	"log"
 	"net/http"
 
@@ -9,8 +10,15 @@ import (
 )
 
 func main() {
+	dsn := "host=CONFIDENTAL user=CONFIDENTAL password=CONFIDENTAL dbname=CONFIDENTAL port=CONFIDENTAL sslmode=disable TimeZone=CONFIDENTAL"
+	us, err := models.NewUserService(dsn)
+	if err != nil {
+		panic(err)
+	}
+	defer us.Close()
+	us.AutoMigrate()
 	staticC := controllers.NewStatic()
-	usersC := controllers.NewUsers()
+	usersC := controllers.NewUsers(us)
 
 	mux := mux.NewRouter()
 	mux.Handle("/", staticC.Home).Methods("GET")
