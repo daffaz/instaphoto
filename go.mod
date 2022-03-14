@@ -6,6 +6,8 @@ require github.com/gorilla/mux v1.8.0
 
 require (
 	github.com/gorilla/schema v1.2.0
+	golang.org/x/crypto v0.0.0-20220313003712-b769efc7c000
+	gorm.io/driver/postgres v1.3.1
 	gorm.io/gorm v1.23.2
 )
 
@@ -20,7 +22,5 @@ require (
 	github.com/jackc/pgx/v4 v4.14.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.4 // indirect
-	golang.org/x/crypto v0.0.0-20220313003712-b769efc7c000 // indirect
 	golang.org/x/text v0.3.7 // indirect
-	gorm.io/driver/postgres v1.3.1 // indirect
 )
