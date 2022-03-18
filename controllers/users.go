@@ -44,7 +44,6 @@ func (u *Users) New(w http.ResponseWriter, r *http.Request) {
 	if err := u.NewView.Render(w, nil); err != nil {
 		panic(err)
 	}
-	w.Header().Set("Content-Type", "text/html")
 }
 
 // Login is used to render the form where a user can login
@@ -54,7 +53,6 @@ func (u *Users) Login(w http.ResponseWriter, r *http.Request) {
 	if err := u.LoginView.Render(w, nil); err != nil {
 		panic(err)
 	}
-	w.Header().Set("Content-Type", "text/html")
 }
 
 func (u *Users) Authenticate(w http.ResponseWriter, r *http.Request) {

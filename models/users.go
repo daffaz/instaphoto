@@ -3,6 +3,9 @@ package models
 import (
 	"errors"
 
+	"instaphoto/hash"
+	"instaphoto/rand"
+
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -16,16 +19,21 @@ var (
 	userPwPepper       = "secret-random-string"
 )
 
+const hmacSecretKey = "secret-hmac-key"
+
 type User struct {
 	gorm.Model
 	Name         string
 	Email        string `gorm:"not null;uniqueIndex"`
 	Password     string `gorm:"-"`
 	PasswordHash string `gorm:"not null"`
+	Remember     string `gorm:"-"`
+	RememberHash string `gorm:"not null;uniqueIndex"`
 }
 
 type UserService struct {
-	db *gorm.DB
+	db   *gorm.DB
+	hmac hash.HMAC
 }
 
 func (us *UserService) Close() error {
@@ -70,6 +78,16 @@ func (us *UserService) ByEmail(email string) (*User, error) {
 	return &user, err
 }
 
+func (us *UserService) ByRemember(token string) (*User, error) {
+	var user User
+	rememberHash := us.hmac.Hash(token)
+	err := first(us.db.Where("remember_hash = ?", rememberHash), &user)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 // Create will create the provided user and backfill data
 // like the ID, CreatedAt, and UpdatedAt fields.
 func (us *UserService) Create(user *User) error {
@@ -79,12 +97,25 @@ func (us *UserService) Create(user *User) error {
 	}
 	user.PasswordHash = string(hashedBytes)
 	user.Password = ""
+
+	if user.Remember == "" {
+		token, err := rand.RememberToken()
+		if err != nil {
+			return err
+		}
+		user.Remember = token
+	}
+	user.RememberHash = us.hmac.Hash(user.Remember)
+
 	return us.db.Create(user).Error
 }
 
 // Update will update the provided user with all of the data
 // in the provided user object.
 func (us *UserService) Update(user *User) error {
+	if user.Remember != "" {
+		user.RememberHash = us.hmac.Hash(user.Remember)
+	}
 	return us.db.Save(user).Error
 }
 
@@ -142,8 +173,12 @@ func NewUserService(connectionInfo string) (*UserService, error) {
 	if err != nil {
 		return nil, err
 	}
+	hmac := hash.NewHMAC(hmacSecretKey)
 
-	return &UserService{db}, nil
+	return &UserService{
+		db:   db,
+		hmac: hmac,
+	}, nil
 }
 
 // first will query using the provided gorm.DB and it will
